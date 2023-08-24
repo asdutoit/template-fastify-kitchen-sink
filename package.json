@@ -1,0 +1,44 @@
+{
+  "type": "module",
+  "name": "myproject",
+  "description": "This project was bootstrapped with Fastify-CLI.",
+  "version": "1.0.0",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "c8 tap \"test/**/*.test.js\"",
+    "start": "fastify start -l info app.js",
+    "dev": "fastify start -w -l info -P app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^5.0.0",
+    "@fastify/cookie": "^9.0.4",
+    "@fastify/cors": "^8.3.0",
+    "@fastify/jwt": "^7.2.0",
+    "@fastify/passport": "^2.3.0",
+    "@fastify/redis": "^6.1.1",
+    "@fastify/secure-session": "^6.2.0",
+    "@fastify/sensible": "^5.0.0",
+    "bcrypt": "^5.1.1",
+    "chalk": "^5.3.0",
+    "fastify": "^4.0.0",
+    "fastify-cli": "^5.8.0",
+    "fastify-plugin": "^4.0.0",
+    "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.1",
+    "passport-google-oauth20": "^2.0.0",
+    "prettier": "^3.0.2"
+  },
+  "devDependencies": {
+    "c8": "^7.13.0",
+    "tap": "^16.1.0"
+  },
+  "tap": {
+    "coverage": false
+  }
+}

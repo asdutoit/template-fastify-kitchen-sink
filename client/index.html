@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- Fastify server runs on localhost:3000 -->
+    <a id="loginLink" href="http://localhost:3000/auth/google/login"
+      >Google Login
+    </a>
+    <div>
+      <button id="button">Click here to test jwttoken</button>
+    </div>
+  </body>
+  <script>
+    const currentUrl = window.location.href;
+
+    document.getElementById(
+      "loginLink"
+    ).href = `http://localhost:3000/auth/google/login?redirectUrl=${currentUrl}`;
+
+    function getCookie(name) {
+      const cookieValue = document.cookie.match(
+        "(^|[^;]+)\\s*" + name + "\\s*=\\s*([^;]+)"
+      );
+      return cookieValue ? cookieValue.pop() : "";
+    }
+
+    const jwtToken = getCookie("jwtToken");
+    console.log("jwt", jwtToken);
+
+    function fetchData() {
+      fetch("http://localhost:3000/example/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      })
+        .then((res) => {
+          console.log("res", res);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    }
+    document.getElementById("button").addEventListener("click", fetchData);
+  </script>
+</html>
