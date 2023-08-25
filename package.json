@@ -8,7 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "c8 tap \"test/**/*.test.js\"",
+    "test": "mocha \"test/**/*.test.js\" --timeout 10000",
+    "test2": "c8 mocha \"test/**/*.test.js\" --timeout 10000",
     "start": "fastify start -l info app.js",
     "dev": "fastify start -w -l info -P app.js"
   },
@@ -36,7 +37,7 @@
   },
   "devDependencies": {
     "c8": "^7.13.0",
-    "tap": "^16.1.0"
+    "mocha": "^10.2.0"
   },
   "tap": {
     "coverage": false
