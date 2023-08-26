@@ -1,6 +1,6 @@
 // BADGE REQUIRED
 
-This Fastify Backend Template is a starting point for a backend application that uses Fastify, GraphQL, REST, and Prisma. You can using any Database that Prisma supports. This template is setup to use MongoDB. The `Getting Started` instructions below will guide on setting up a different DB, like Postgresql.
+This Fastify Backend Template is a starting point for a backend application that uses Fastify, GraphQL, REST, and Prisma. You can use any Database that Prisma supports. This template is setup to use MongoDB. The `Getting Started` instructions below will guide on setting up a different DB, like Postgresql.
 
 <br />
 

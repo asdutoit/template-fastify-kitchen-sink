@@ -5,6 +5,7 @@ import fastifyPassport from "@fastify/passport";
 import fs from "fs";
 import fastifySecureSession from "@fastify/secure-session";
 import Cors from "@fastify/cors";
+import { verifyToken } from "./utils/jwt.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,22 @@ export default async function (fastify, opts) {
   });
   fastify.register(fastifyPassport.initialize());
   fastify.register(fastifyPassport.secureSession());
+  fastify.decorate("authenticate", function (request, reply, next) {
+    try {
+      const result = verifyToken(request.headers.authorization);
+      if (result) {
+        console.log("result", result);
+        console.log("user", request.user);
+        console.log("result", result);
+        request.user = { ...request.user, ...result };
+        next();
+      } else {
+        reply.status(401).send({ message: "Unauthorized" });
+      }
+    } catch (error) {
+      reply.status(401).send({ message: "Unauthorized" });
+    }
+  });
 
   // Do not touch the following lines
 
