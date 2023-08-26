@@ -31,6 +31,9 @@ jobs:
         with:
           version: "latest" # You can specify a specific version if needed
 
+      - name: Set up PATH for PNPM
+        run: echo "::add-path::$(npm bin --global)"
+
       - run: pnpm install
         # If you need to install Prisma, you can run 'pnpx prisma generate' here
       - run: pnpm test
@@ -52,4 +55,6 @@ jobs:
         uses: pnpm/action-setup@v1
         with:
           version: "latest" # You can specify a specific version if needed
+      - name: Set up PATH for PNPM
+        run: echo "::add-path::$(npm bin --global)"
       - run: pnpm run build --if-present
