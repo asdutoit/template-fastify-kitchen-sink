@@ -58,8 +58,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js and Yarn
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: "18.x"
-          yarn-version: "1.x" # Specify the Yarn version you want to use here
-      - run: yarn run build --if-present
+      - name: Check if "build" script exists
+        run: |
+          if ! grep -q '"build":' package.json; then
+            echo "No 'build' script found in package.json. Skipping build step."
+            touch build-step-skipped.txt
+          fi
+      - name: Run build if "build" script exists
+        run: |
+          if [ ! -f "build-step-skipped.txt" ]; then
+            yarn run build
+          fi
