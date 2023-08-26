@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
+name: Node.js CI with PNPM
 
 on:
   push:
@@ -19,9 +16,6 @@ jobs:
         ports:
           - 6379:6379
         options: --name redis-container
-        # env:
-        #   REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        #   REDIS_USERNAME: ${{ secrets.REDIS_USERNAME }}
 
     strategy:
       matrix:
@@ -36,16 +30,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          # Change 'npm' to 'pnpm' in the cache option
+          cache: "pnpm"
 
-      # - name: Start MongoDB
-      #   uses: supercharge/mongodb-github-action@1.8.0
-      #   with:
-      #     mongodb-version: ${{ matrix.mongodb-version }}
-      #     mongodb-replica-set: "rs0"
-
-      - run: pnpm ci
-      # - run: npx prisma generate
+      - run: pnpm install
+        # If you need to install Prisma, you can run 'pnpx prisma generate' here
       - run: pnpm test
         env:
           NODE_ENV: ${{secrets.NODE_ENV}}
@@ -55,6 +44,7 @@ jobs:
           REDIS_PORT: ${{secrets.REDIS_PORT}}
           REDIS_USERNAME: ""
           REDIS_PASSWORD: ""
+
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -64,5 +54,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          # Change 'npm' to 'pnpm' in the cache option
           cache: "pnpm"
       - run: pnpm run build --if-present
