@@ -34,9 +34,44 @@ This Fastify Backend Template is a starting point for a backend application that
 
 # Testing
 
+This template uses Mocha for testing. 
+Tests are located in the `test` folder.
+You can run the tests by running the following command in your terminal:
+`npm run test`
+
+You can also run load tests to each route using any app you prefer.   The test below was run using [Autocannon]('https://www.npmjs.com/package/autocannon)
+
+```bash
+$> autocannon -c 100 -p 10 -d 5 http://localhost:3000/healthcheck
+
+Running 5s test @ http://localhost:3000/healthcheck
+100 connections with 10 pipelining factor
+
+
+┌─────────┬───────┬───────┬───────┬───────┬──────────┬──────────┬────────┐
+│ Stat    │ 2.5%  │ 50%   │ 97.5% │ 99%   │ Avg      │ Stdev    │ Max    │
+├─────────┼───────┼───────┼───────┼───────┼──────────┼──────────┼────────┤
+│ Latency │ 18 ms │ 23 ms │ 55 ms │ 69 ms │ 29.86 ms │ 12.36 ms │ 115 ms │
+└─────────┴───────┴───────┴───────┴───────┴──────────┴──────────┴────────┘
+┌───────────┬─────────┬─────────┬─────────┬─────────┬─────────┬────────┬─────────┐
+│ Stat      │ 1%      │ 2.5%    │ 50%     │ 97.5%   │ Avg     │ Stdev  │ Min     │
+├───────────┼─────────┼─────────┼─────────┼─────────┼─────────┼────────┼─────────┤
+│ Req/Sec   │ 31679   │ 31679   │ 32607   │ 34655   │ 32872   │ 997.24 │ 31677   │
+├───────────┼─────────┼─────────┼─────────┼─────────┼─────────┼────────┼─────────┤
+│ Bytes/Sec │ 7.35 MB │ 7.35 MB │ 7.57 MB │ 8.04 MB │ 7.63 MB │ 232 kB │ 7.35 MB │
+└───────────┴─────────┴─────────┴─────────┴─────────┴─────────┴────────┴─────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 5
+
+165k requests in 5.02s, 38.1 MB read
+```
+
+# Default Routes
 The following routes will be exposed:
 
 - `GET /healthcheck` - Returns a 200 status code and response "OK" if the server is running
+- `GET /metrics` - Prometheus metrics endpoint
 - `GET /graphiql` - GraphQL Playground. You need to set your ENV variable, GRAPHQLCLIENT to true to enable this route. Example: `GRAPHQLCLIENT=true`
 - `POST /register` - Register a new user
 - `GET /allusers` - Get all users (Auth Required) Add JWT obtained from `/register` route, to the `Authorization` header. Example: `Bearer eyJhb....`
@@ -44,3 +79,28 @@ The following routes will be exposed:
 
 The Redis cache expires by default in 10 seconds. This is set in the `/plugins/caching.js` file
 If you wish to change this behaviour, change the value for `expiresIn: 100000`, to the desired value in milliseconds or set it in each individual API route file.
+
+---
+
+# Monitoring
+
+The following template uses the `prom-client` package to expose Prometheus metrics. You can view the metrics by navigating to `http://localhost:3000/metrics`
+A Docker-Compose file is included in the root of the project. You can run the following command to start the Prometheus and Grafana containers:
+
+You can then add the Prometheus datasource to Grafana using the following URL: `http://prometheus:9090` and add a new Dashboard.  
+You can use the following Dashboard template to get started: [Grafana Dashboard](https://grafana.com/grafana/dashboards/12230)
+
+<br />
+
+---
+
+<br />
+
+# Authentication
+
+<br />
+
+> **TODO**: Add middleware to rate limit requests
+
+> **TODO**: Add auth middleware to routes (`/metrics`)
+> **TODO**: Add auth middleware to Prometheus
