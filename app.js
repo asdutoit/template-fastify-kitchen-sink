@@ -34,9 +34,6 @@ export default async function (fastify, opts) {
     try {
       const result = verifyToken(request.headers.authorization);
       if (result) {
-        console.log("result", result);
-        console.log("user", request.user);
-        console.log("result", result);
         request.user = { ...request.user, ...result };
         next();
       } else {

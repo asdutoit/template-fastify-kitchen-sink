@@ -1,0 +1,9 @@
+{
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImVtYWlsIjoia29vc0BnbWFpbC5jb20iLCJuYW1lIjoiIiwicGljdHVyZSI6IiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjkzMjI4NDU3fQ.7OwEHBSx7AigM8I9Gk8glwdiwaatbVve_gya6qZmUhA"
+  },
+  "body": {
+    "query": "query { books { title } }"
+  }
+}

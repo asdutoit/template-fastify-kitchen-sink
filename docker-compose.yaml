@@ -6,9 +6,10 @@ services:
       # - BACKEND_SERVER_URL=http://192.168.3.248:3000
     volumes:
       - prometheus_data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/:/etc/prometheus/
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.config.file=/etc/prometheus/web.yml"
     ports:
       - "9090:9090"
 

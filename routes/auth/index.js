@@ -92,18 +92,19 @@ export default async function (fastify, opts) {
   fastify.post("/login", async function (request, reply) {
     try {
       const { email, password } = request.body;
+      try {
+        console.log("prisma", await fastify.prisma.user.findMany());
+      } catch (error) {
+        console.log("error", error);
+      }
+
       // TODO 1: Check if the user exists in DB and retrieve details (you should implement this logic)
-      // If the user does not exist, return an error or handle it as needed.
-      // const user = request.prisma.user.findUnique({
-      //   where: {
-      //     email,
-      //   },
-      // });
       const user = {
         _id: "123",
         email: "koos@gmail.com",
         password:
           "$2b$10$mpjCaGU32QbuwDIwLBCADu31QEzA9pvuCqSh39RxltCeWtO/cKY8G",
+        role: "USER",
       };
       if (!user) {
         reply.status(404).send({ message: "User not found" });
@@ -120,6 +121,7 @@ export default async function (fastify, opts) {
           email: user.email,
           name: user.name || "",
           picture: user.picture || "",
+          role: user.role || "USER",
         });
         reply
           .setCookie("jwtToken", jwtToken, {

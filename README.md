@@ -34,12 +34,12 @@ This Fastify Backend Template is a starting point for a backend application that
 
 # Testing
 
-This template uses Mocha for testing. 
+This template uses Mocha for testing.
 Tests are located in the `test` folder.
 You can run the tests by running the following command in your terminal:
 `npm run test`
 
-You can also run load tests to each route using any app you prefer.   The test below was run using [Autocannon]('https://www.npmjs.com/package/autocannon)
+You can also run load tests to each route using any app you prefer. The test below was run using [Autocannon]('https://www.npmjs.com/package/autocannon)
 
 ```bash
 $> autocannon -c 100 -p 10 -d 5 http://localhost:3000/healthcheck
@@ -68,6 +68,7 @@ Req/Bytes counts sampled once per second.
 ```
 
 # Default Routes
+
 The following routes will be exposed:
 
 - `GET /healthcheck` - Returns a 200 status code and response "OK" if the server is running
@@ -85,9 +86,16 @@ If you wish to change this behaviour, change the value for `expiresIn: 100000`, 
 # Monitoring
 
 The following template uses the `prom-client` package to expose Prometheus metrics. You can view the metrics by navigating to `http://localhost:3000/metrics`
-A Docker-Compose file is included in the root of the project. You can run the following command to start the Prometheus and Grafana containers:
+A Docker-Compose file is included in the root of the project. You can run the following command to start the Prometheus and Grafana containers: `docker-compose up -d`
 
-You can then add the Prometheus datasource to Grafana using the following URL: `http://prometheus:9090` and add a new Dashboard.  
+Note, the `prometheus` folder contains the `prometheus.yml` config file. This file is mounted to the Prometheus container and is used to scrape the metrics from the Fastify server.
+
+The folder also contains a `web.yml` file which adds basic auth to your prometheus server. The default username and password is `admin` and `test`.
+
+You can change this by updating the `web.yml` file. The password needs to be generated and encrypted using a tool like Bcrypt. You can use the following site to generate the password: [Bcrypt Generator](https://bcrypt-generator.com/)
+
+You can then add the Prometheus datasource to Grafana using the following URL: `http://prometheus:9090` and add a new Dashboard.
+
 You can use the following Dashboard template to get started: [Grafana Dashboard](https://grafana.com/grafana/dashboards/12230)
 
 <br />
@@ -98,9 +106,17 @@ You can use the following Dashboard template to get started: [Grafana Dashboard]
 
 # Authentication
 
+WORK IN PROGRESS
+
+You can make a POST request to the graphql protected endpoint. The following endpoint requires a `ADMIN` role on the user account:
+`curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <TOKEN>" -d '{
+  "query": "query { add(x: 3, y: 10) shipwrecks { coordinates, feature_type } }"
+}' http://localhost:3000/graphql | jq .`
+
 <br />
 
 > **TODO**: Add middleware to rate limit requests
 
 > **TODO**: Add auth middleware to routes (`/metrics`)
-> **TODO**: Add auth middleware to Prometheus
+
+> **TODO**: ~~Add auth middleware to Prometheus~~
