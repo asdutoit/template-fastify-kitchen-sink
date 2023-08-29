@@ -43,6 +43,33 @@ export default async function (fastify, opts) {
       reply.status(401).send({ message: "Unauthorized" });
     }
   });
+  const now = () => Date.now();
+
+  fastify.addHook("onRequest", (request, reply, done) => {
+    reply.startTime = now();
+    request.log.info(
+      {
+        url: request.raw.url,
+        id: request.id,
+        headers: request.headers,
+        key: "koos",
+      },
+      "received request"
+    );
+    done();
+  });
+
+  fastify.addHook("onResponse", (request, reply, done) => {
+    request.log.info(
+      {
+        url: request.raw.url, // add url to response as well for simple correlating
+        statusCode: reply.raw.statusCode,
+        durationMs: now() - reply.startTime, // recreate duration in ms - use process.hrtime() - https://nodejs.org/api/process.html#process_process_hrtime_bigint for most accuracy
+      },
+      "request completed"
+    );
+    done();
+  });
 
   // Do not touch the following lines
 

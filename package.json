@@ -11,6 +11,7 @@
     "test": "mocha \"test/**/*.test.js\" --timeout 10000",
     "start": "fastify start -l info app.js",
     "dev": "fastify start -w -l info -P app.js",
+    "newdev": "nodemon ./server.js",
     "doctor": "clinic doctor --autocannon [ /healthcheck ] -- node ./node_modules/.bin/fastify start -l info app.js",
     "hey": "hey -m GET -T 'application/json' http://localhost:3000/healthcheck"
   },
@@ -45,6 +46,7 @@
     "mercurius-cache": "^5.0.0",
     "passport-google-oauth20": "^2.0.0",
     "prettier": "^3.0.2",
+    "uuid": "^9.0.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
