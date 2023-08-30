@@ -12,6 +12,25 @@ const __dirname = path.dirname(__filename);
 
 // Pass --options via CLI arguments in command to enable these options.
 export const options = {};
+const now = () => Date.now();
+
+const customLogger = {
+  // Define common fields that you want to include in all log messages.
+  commonFields: (request) => ({
+    url: request.raw.url,
+    id: request.id,
+    headers: request.headers,
+    user: request.user,
+  }),
+
+  // Define a custom log method that includes the common fields.
+  log: (request, level, message) => {
+    const fields = {
+      ...customLogger.commonFields(request),
+    };
+    request.log[level](fields, message);
+  },
+};
 
 export default async function (fastify, opts) {
   await fastify.register(Cors, {
@@ -43,19 +62,10 @@ export default async function (fastify, opts) {
       reply.status(401).send({ message: "Unauthorized" });
     }
   });
-  const now = () => Date.now();
 
   fastify.addHook("onRequest", (request, reply, done) => {
     reply.startTime = now();
-    request.log.info(
-      {
-        url: request.raw.url,
-        id: request.id,
-        headers: request.headers,
-        key: "koos",
-      },
-      "received request"
-    );
+    customLogger.log(request, "info", "received request");
     done();
   });
 
@@ -65,6 +75,7 @@ export default async function (fastify, opts) {
         url: request.raw.url, // add url to response as well for simple correlating
         statusCode: reply.raw.statusCode,
         durationMs: now() - reply.startTime, // recreate duration in ms - use process.hrtime() - https://nodejs.org/api/process.html#process_process_hrtime_bigint for most accuracy
+        user: request.user,
       },
       "request completed"
     );

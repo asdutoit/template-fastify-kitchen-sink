@@ -12,7 +12,21 @@ services:
       - "--web.config.file=/etc/prometheus/web.yml"
     ports:
       - "9090:9090"
-
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - ./loki/:/etc/loki/
+        - loki_data:/data
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./promtail/:/etc/promtail/
+    command: -config.file=/etc/promtail/config.yaml
+    ports:
+      - "9080:9080" # Adjust the port as needed
   grafana:
     image: grafana/grafana:latest
     volumes:
@@ -32,3 +46,4 @@ services:
 volumes:
   prometheus_data: {}
   grafana_data: {}
+  loki_data: {}

@@ -1,6 +1,6 @@
 export default async function (fastify, opts) {
   fastify.get("/", async function (request, reply) {
-    request.log.info("healthcheck");
+    fastify.log.error("This is an error");
     reply.send({ status: "OK" });
   });
 }
