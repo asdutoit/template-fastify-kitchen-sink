@@ -17,6 +17,12 @@ dotenv.config();
 
 const pinoLokiTransport = pino.transport({
   target: "pino-loki",
+  formatters: {
+    level: (label) => {
+      return { severity: label.toUpperCase() };
+    },
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
   options: {
     host: "http://localhost:3100", // Change if Loki hostname is different
     labels: { application: "fastify-kitchen" },
