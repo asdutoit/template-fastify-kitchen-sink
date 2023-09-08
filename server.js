@@ -88,8 +88,8 @@ app.addHook("onClose", async (instance, done) => {
 });
 
 // Start listening.
-app.listen({ port: process.env.PORT || 3000 }, (err) => {
-  console.log("Server listening at http://localhost:3000");
+app.listen({ port: process.env.PORT || 3001 }, (err) => {
+  console.log("Server listening at http://localhost:3001");
   console.log("ENV------: ", process.env.NODE_ENV);
   if (err) {
     app.log.info("Server listening...");

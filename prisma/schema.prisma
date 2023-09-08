@@ -8,6 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model photos {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  href           String
+  base64         String
+  imagePath      String
+  imageFileName  String
+  imageName      String
+  imageExtension String
+}
+
 model shipwrecks {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
   chart         String

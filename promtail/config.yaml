@@ -1,5 +1,6 @@
 server:
   http_listen_port: 9080
+  grpc_listen_port: 0
 
 positions:
   filename: /tmp/positions.yaml
@@ -19,3 +20,4 @@ scrape_configs:
           - host.docker.internal:3000 # Adjust the address and port to match your Fastify application
         labels:
           job: fastify-logs
+          __path__: /usr/fastify-logs/data/*.log

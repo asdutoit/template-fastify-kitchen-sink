@@ -14,6 +14,7 @@ const schema = `
     books: [Book]
     shipwrecks: [Shipwrecks]
     notifications: [Notification]
+    photos: [Photos]
   }
 
   type Mutation {
@@ -32,6 +33,15 @@ const schema = `
   type Point {
     longitude: Float!
     latitude: Float!
+  }
+
+  type Photos {
+    href: String
+    base64: String
+    imagePath: String
+    imageFileName: String
+    imageName: String
+    imageExtension: String
   }
 
   type PointList {

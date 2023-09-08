@@ -23,6 +23,13 @@ const resolvers = {
     add: async (_, { x, y }) => x + y,
     books: () => books,
     notifications: () => notifications,
+    photos: async (_parent, args, ctx) => {
+      const { userInfo } = ctx;
+      if (!userInfo || userInfo === null) {
+        throw new Error("No user found for this Id");
+      }
+      return ctx.prismaForGraphQL.photos.findMany();
+    },
     shipwrecks: async (_parent, args, ctx) => {
       const { userInfo } = ctx;
       if (!userInfo || userInfo === null) {

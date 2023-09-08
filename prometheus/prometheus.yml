@@ -1,7 +1,20 @@
 global:
-  scrape_interval: 15s
-  scrape_timeout: 10s
-  evaluation_interval: 1m
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  evaluation_interval: 5s
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
 scrape_configs:
   - job_name: "fastify-server"
     scrape_interval: 5s
@@ -11,3 +24,9 @@ scrape_configs:
       - labels:
           group: "production"
           type: "backend"
+  - job_name: "monitoring/prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+  - job_name: "monitoring/grafana"
+    static_configs:
+      - targets: ["grafana:3000"]

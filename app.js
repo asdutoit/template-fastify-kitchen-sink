@@ -6,6 +6,9 @@ import fs from "fs";
 import fastifySecureSession from "@fastify/secure-session";
 import Cors from "@fastify/cors";
 import { verifyToken } from "./utils/jwt.js";
+// import multipart from "@fastify/multipart";
+import multer from "fastify-multer";
+import uuid4 from "uuid4";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,6 +16,25 @@ const __dirname = path.dirname(__filename);
 // Pass --options via CLI arguments in command to enable these options.
 export const options = {};
 const now = () => Date.now();
+const FILE_TYPE_MAP = {
+  // mime type
+  "image/png": "png",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
+};
+
+// Storage for multer and photos
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads"));
+  },
+  filename: function (req, file, cb) {
+    const extension = FILE_TYPE_MAP[file.mimetype];
+    cb(null, uuid4() + Date.now() + "." + extension);
+  },
+});
+
+const bufferStorage = multer.memoryStorage();
 
 const customLogger = {
   // Define common fields that you want to include in all log messages.
@@ -49,6 +71,8 @@ export default async function (fastify, opts) {
   });
   fastify.register(fastifyPassport.initialize());
   fastify.register(fastifyPassport.secureSession());
+  // fastify.register(multipart, { throwFileSizeLimit: false });
+  fastify.register(multer.contentParser);
   fastify.decorate("authenticate", function (request, reply, next) {
     try {
       const result = verifyToken(request.headers.authorization);
@@ -62,6 +86,21 @@ export default async function (fastify, opts) {
       reply.status(401).send({ message: "Unauthorized" });
     }
   });
+  fastify.decorate(
+    "upload",
+    multer({
+      storage: storage,
+      // dest: path.join(__dirname, "uploads"),
+      limits: { fileSize: 1024 * 1024 * 10 },
+      fileFilter: function (req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return cb(new Error("Only image files are allowed!"));
+        } else {
+          cb(null, true);
+        }
+      },
+    })
+  );
 
   fastify.addHook("onRequest", (request, reply, done) => {
     reply.startTime = now();
