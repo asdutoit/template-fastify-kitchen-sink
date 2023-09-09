@@ -9,13 +9,14 @@ datasource db {
 }
 
 model photos {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  href           String
-  base64         String
-  imagePath      String
-  imageFileName  String
-  imageName      String
-  imageExtension String
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  href             String
+  base64           String
+  imagePath        String
+  imageFileName    String
+  imageName        String
+  imageExtension   String
+  imageOrientation String
 }
 
 model shipwrecks {

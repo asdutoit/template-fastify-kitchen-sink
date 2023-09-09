@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const books = [
   {
     title: "The Awakening",
@@ -54,7 +56,32 @@ const resolvers = {
 
       return notification;
     },
+    deletePhotos: async (_, args, ctx) => {
+      const { userInfo } = ctx;
+      if (!userInfo || userInfo === null) {
+        throw new Error("No user found for this Id");
+      }
+      const deleteUrl = `${process.env.BUNNYCDN_STORAGE_LOCATION}${process.env.BUNNYCDN_STORAGE_ZONE_NAME}/`;
+      let config = {
+        method: "delete",
+        maxBodyLength: Infinity,
+        url: "https://jh.storage.bunnycdn.com/homerunner-bunny-storage/",
+        headers: {
+          AccessKey: "71a778a8-d391-4187-a175e027bd97-82be-4e1a",
+          "Content-Type": "application/json",
+        },
+      };
+      try {
+        await axios.request(config);
+        await ctx.prismaForGraphQL.photos.deleteMany();
+        return { message: "Deleted all photos" };
+        // }
+      } catch (error) {
+        return { message: "There was an error processing this request" };
+      }
+    },
   },
+
   Subscription: {
     notificationAdded: {
       // You can also subscribe to multiple topics at once using an array like this:

@@ -19,6 +19,7 @@ const schema = `
 
   type Mutation {
     addNotification(message: String): Notification
+    deletePhotos: DeletePhotos
   }
 
   type Subscription {
@@ -55,6 +56,10 @@ const schema = `
 
   type Notification {
     id: ID!
+    message: String
+  }
+
+  type DeletePhotos {
     message: String
   }
 `;

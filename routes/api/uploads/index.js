@@ -1,9 +1,8 @@
-import fs from "fs";
-import util from "util";
+import fs, { read } from "fs";
 import path from "path";
-import { pipeline } from "stream";
 import axios from "axios";
 import { getPlaiceholder } from "plaiceholder";
+import probe from "probe-image-size";
 
 const __dirname = path.resolve();
 const uploadDir = path.join(__dirname, "uploads");
@@ -32,7 +31,12 @@ export default async function (fastify, options) {
           });
         } else {
           const readfile = fs.readFileSync(`${uploadDir}/${file.filename}`);
-
+          const probefile = fs.createReadStream(
+            `${uploadDir}/${file.filename}`
+          );
+          let result = await probe(probefile);
+          const imageOrientation =
+            result.width > result.height ? "landscape" : "portrait";
           const { base64 } = await getPlaiceholder(readfile);
           imageData.base64 = base64;
 
@@ -48,6 +52,7 @@ export default async function (fastify, options) {
           imageData.imageFileName = file.filename;
           imageData.imageName = file.filename.split(".")[0];
           imageData.imageExtension = file.filename.split(".")[1];
+          imageData.imageOrientation = imageOrientation;
           imageData.href = `${process.env.BUNNYCDN_HOMERUNNER_CDN}/${file.filename}`;
           allFiles.push(imageData);
 
