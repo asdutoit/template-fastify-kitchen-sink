@@ -1,5 +1,5 @@
 import fastifyPassport from "@fastify/passport";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { signToken, verifyTokenFromCtx, verifyToken } from "../../utils/jwt.js";
 

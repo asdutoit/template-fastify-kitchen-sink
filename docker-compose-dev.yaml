@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  fastify:
+    network_mode: bridge
+    build:
+      target: development
+    # command: yarn run dev
+    ports:
+      - "${BIND_PORT}:${BIND_PORT}"
+      # Required to access prsma studio
+      - "5555:5555"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=172.17.0.3

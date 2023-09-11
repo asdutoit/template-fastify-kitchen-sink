@@ -77,6 +77,7 @@ const resolvers = {
         return { message: "Deleted all photos" };
         // }
       } catch (error) {
+        console.log("error", error);
         return { message: "There was an error processing this request" };
       }
     },

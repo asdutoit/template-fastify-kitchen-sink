@@ -2,7 +2,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     environment:
-      - BACKEND_SERVER_URL=http://host.docker.internal:3000
+      - BACKEND_SERVER_URL=http://host.docker.internal:3002
       # - BACKEND_SERVER_URL=http://192.168.3.248:3000
     volumes:
       - prometheus_data:/prometheus
@@ -42,6 +42,16 @@ services:
       - prometheus
     ports:
       - "3001:3000"
+  # fastify:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./fastify/:/usr/src/app/
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #   command: npm run start:dev
 
 volumes:
   prometheus_data: {}

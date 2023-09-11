@@ -9,11 +9,13 @@
   },
   "scripts": {
     "test": "mocha \"test/**/*.test.js\" --timeout 10000",
-    "start": "fastify start -l info app.js",
+    "oldstart": "fastify start -l info app.js",
+    "start": "nodemon ./server.js",
     "olddev": "fastify start -w -l info -P app.js",
     "dev": "nodemon ./server.js",
     "doctor": "clinic doctor --autocannon [ /healthcheck ] -- node ./node_modules/.bin/fastify start -l info app.js",
-    "hey": "hey -m GET -T 'application/json' http://localhost:3000/healthcheck"
+    "hey": "hey -m GET -T 'application/json' http://localhost:3000/healthcheck",
+    "docker:dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -32,7 +34,7 @@
     "@fastify/swagger-ui": "^1.9.3",
     "@prisma/client": "^4.5.0",
     "axios": "^1.5.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "crypt": "^0.0.2",
     "fastify": "^4.0.0",
@@ -60,6 +62,7 @@
     "@fastify/multipart": "^7.7.3",
     "c8": "^7.13.0",
     "mocha": "^10.2.0",
+    "nodemon": "3.0.1",
     "prisma": "^4.16.1"
   },
   "tap": {

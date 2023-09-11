@@ -43,6 +43,7 @@ const schema = `
     imageFileName: String
     imageName: String
     imageExtension: String
+    imageOrientation: String
   }
 
   type PointList {

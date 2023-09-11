@@ -24,7 +24,7 @@ const pinoLokiTransport = pino.transport({
   },
   timestamp: pino.stdTimeFunctions.isoTime,
   options: {
-    host: "http://localhost:3100", // Change if Loki hostname is different
+    host: `${process.env.LOKIURL}:${process.env.LOKIPORT}`, // Change if Loki hostname is different
     labels: { application: "fastify-kitchen" },
   },
 });
@@ -88,8 +88,7 @@ app.addHook("onClose", async (instance, done) => {
 });
 
 // Start listening.
-app.listen({ port: process.env.PORT || 3001 }, (err) => {
-  console.log("Server listening at http://localhost:3001");
+app.listen({ port: process.env.PORT || 3002, host: "0.0.0.0" }, (err) => {
   console.log("ENV------: ", process.env.NODE_ENV);
   if (err) {
     app.log.info("Server listening...");
