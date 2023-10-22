@@ -2,6 +2,7 @@ import fastifyPassport from "@fastify/passport";
 import bcrypt from "bcryptjs";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { signToken, verifyTokenFromCtx, verifyToken } from "../../utils/jwt.js";
+import { SharedUserSchema } from "./schemas.js";
 
 fastifyPassport.use(
   "google",
@@ -65,72 +66,96 @@ export default async function (fastify, opts) {
   );
 
   // ========= Email and Password =========
-  fastify.post("/register", async function (request, reply) {
-    try {
-      const { email, password } = request.body;
-      // TODO 1: Check if the user already exists (you should implement this logic)
-      // If the user already exists, return an error or handle it as needed.
-
-      // If the user does not exist, create the user.
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      // TODO 2: Store the user information in your database (you should implement this logic)
-
-      // Respond with a success message or any relevant data
-      reply.send({
-        message: "Registration successful",
-        email,
-        password: hashedPassword,
-      });
-    } catch (error) {
-      fastify.log("Registration Failed", error);
-      reply.status(500).send({ message: error });
-    }
-  });
-
-  fastify.post("/login", async function (request, reply) {
-    try {
-      const { email, password } = request.body;
+  fastify.post(
+    "/register",
+    { schema: SharedUserSchema },
+    async function (request, reply) {
       try {
-        console.log("prisma", await fastify.prisma.user.findMany());
-      } catch (error) {
-        console.log("error", error);
-      }
+        const { email, password } = request.body;
 
-      // TODO 1: Check if the user exists in DB and retrieve details (you should implement this logic)
-      const user = {
-        _id: "123",
-        email: "koos@gmail.com",
-        password:
-          "$2b$10$mpjCaGU32QbuwDIwLBCADu31QEzA9pvuCqSh39RxltCeWtO/cKY8G",
-        role: "USER",
-      };
-      if (!user) {
-        reply.status(404).send({ message: "User not found" });
-        return;
-      }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        reply.status(401).send({ message: "Invalid password" });
-        return;
-      } else {
-        // TODO 2: Generate JWT token and send it to the client (you should implement this logic)
-        const jwtToken = signToken({
-          id: user.id || user._id,
-          email: user.email,
-          name: user.name || "",
-          picture: user.picture || "",
-          role: user.role || "USER",
+        if (!email || !password) {
+          return reply
+            .code(400)
+            .send({ message: "Email and password are required" });
+        }
+
+        const existingUser = await fastify.prisma.user.findUnique({
+          where: {
+            email,
+          },
         });
-        reply
-          .setCookie("jwtToken", jwtToken, {
-            path: "/",
-          })
-          .send({ message: "Login successful", jwtToken });
+
+        if (existingUser) {
+          return reply.code(400).send({ message: "User already exists" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = await fastify.prisma.user.create({
+          data: { email, password: hashedPassword, salt },
+        });
+        fastify.log.info(`User registered: ${email}`);
+        reply.send({ message: "Registration successful", email });
+      } catch (error) {
+        fastify.log.error("Registration failed", error);
+        reply.code(500).send({ message: "Internal server error" });
       }
-    } catch (error) {}
-  });
+    }
+  );
+
+  fastify.post(
+    "/login",
+    { schema: SharedUserSchema },
+    async function (request, reply) {
+      try {
+        const { email, password } = request.body;
+
+        if (!email || !password) {
+          return reply
+            .code(400)
+            .send({ message: "Email and password are required" });
+        }
+
+        const existingUser = await fastify.prisma.user.findUnique({
+          where: {
+            email,
+          },
+        });
+
+        if (!existingUser) {
+          reply.status(404).send({ message: "User not found" });
+          return;
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          existingUser.password
+        );
+
+        if (!isPasswordValid) {
+          reply.status(401).send({ message: "Invalid password" });
+        } else {
+          const jwtToken = signToken({
+            id: existingUser.id || existingUser._id,
+            email: existingUser.email,
+            name: existingUser.name || "",
+            picture: existingUser.picture || "",
+            role: existingUser.role || "USER",
+          });
+          fastify.log.info(`User logged in successfully: ${email}`);
+          reply
+            .setCookie("jwtToken", jwtToken, {
+              path: "/",
+            })
+            .send({ message: "Login successful", jwtToken });
+        }
+      } catch (error) {
+        fastify.log.error("Login failed", error);
+        reply.code(500).send({ message: "Internal server error" });
+      }
+    }
+  );
 
   fastify.get("/logout", async function (request, reply) {
     request.logout();

@@ -8,7 +8,7 @@ services:
     # command: yarn run dev
     ports:
       - "${BIND_PORT}:${BIND_PORT}"
-      # Required to access prsma studio
+      # Required to access prisma studio
       - "5555:5555"
     volumes:
       - .:/app

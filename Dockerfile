@@ -1,4 +1,4 @@
-FROM arm64v8/node:gallium as development
+FROM arm64v8/node:20-slim as development
 LABEL maintainer="Stephan du Toit"
 
 WORKDIR /app
@@ -14,4 +14,5 @@ RUN npx prisma generate
 COPY . .
 
 CMD ["yarn"]
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
+CMD ["yarn", "run", "dev"]

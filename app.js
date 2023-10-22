@@ -55,9 +55,9 @@ const customLogger = {
 };
 
 export default async function (fastify, opts) {
-  await fastify.register(Cors, {
-    origin: "*",
-  });
+  // await fastify.register(Cors, {
+  //   origin: "*",
+  // });
   fastify.register(fastifySecureSession, {
     key: fs.readFileSync(path.join(__dirname, "secret-key")),
     cookie: {
@@ -74,8 +74,15 @@ export default async function (fastify, opts) {
   // fastify.register(multipart, { throwFileSizeLimit: false });
   fastify.register(multer.contentParser);
   fastify.decorate("authenticate", function (request, reply, next) {
+    if (!request.headers.authorization && !request.cookies.jwtToken) {
+      return reply.code(400).send({
+        message: "Authorization header or Authorization cookie required",
+      });
+    }
     try {
-      const result = verifyToken(request.headers.authorization);
+      const result = verifyToken(
+        request.headers.authorization || request.cookies.jwtToken
+      );
       if (result) {
         request.user = { ...request.user, ...result };
         next();

@@ -72,8 +72,8 @@ const resolvers = {
         },
       };
       try {
-        await axios.request(config);
         await ctx.prismaForGraphQL.photos.deleteMany();
+        await axios.request(config);
         return { message: "Deleted all photos" };
         // }
       } catch (error) {
